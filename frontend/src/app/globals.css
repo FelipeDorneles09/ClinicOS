@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Google Fonts: Inter ─────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ─── CSS Custom Properties — TailAdmin Dark Theme ───────────────────────── */
+:root {
+  /* Backgrounds */
+  --color-bg: #1A222C;
+  /* main body background */
+  --color-boxdark: #24303F;
+  /* cards, sidebar, panels */
+  --color-boxdark-2: #1D2A39;
+  /* form inputs */
+  --color-form: #1D2A39;
+
+  /* Borders */
+  --color-stroke: #2E3A47;
+  --color-stroke-dark: #2E3A47;
+
+  /* Text */
+  --color-body: #AEB7C0;
+  /* body text */
+  --color-bodydark: #DEE4EE;
+  /* lighter body */
+  --color-bodydark2: #8A99AF;
+  /* muted */
+
+  /* Accent — primary blue (TailAdmin style) */
+  --color-primary: #3C50E0;
+  --color-primary-hover: #3444C4;
+
+  /* Semantic */
+  --color-success: #219653;
+  --color-danger: #D34053;
+  --color-warning: #FFA70B;
+  --color-info: #3BA2B8;
+
+  /* Emerald — kept as medical accent */
+  --color-emerald: #10b981;
+  --color-emerald-hover: #059669;
+
+  /* Meta colors (TailAdmin palette extras) */
+  --color-meta-1: #DC3545;
+  --color-meta-2: #EFF2F7;
+  --color-meta-3: #10B981;
+  --color-meta-4: #313D4A;
+  --color-meta-5: #259AE6;
+  --color-meta-6: #FFBA00;
+  --color-meta-7: #FF6766;
+  --color-meta-8: #F0950C;
+  --color-meta-9: #E5E7EB;
+}
+
+/* ─── Base Reset ─────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-bodydark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv11", "ss01";
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-stroke);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-bodydark2);
+}
+
+/* ─── Selection ──────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(60, 80, 224, 0.25);
+  color: #DEE4EE;
+}
+
+/* ─── Focus ring ─────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Card ───────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--color-boxdark);
+  border: 1px solid var(--color-stroke);
+  border-radius: 0.625rem;
+  /* 10px — TailAdmin rounded-sm equiv */
+}
+
+/* ─── Shimmer skeleton ───────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg,
+      var(--color-boxdark) 0%,
+      var(--color-meta-4) 50%,
+      var(--color-boxdark) 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ─── Status pulse dot ───────────────────────────────────────────────────── */
+@keyframes status-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.4);
+  }
+}
+
+.pulse-dot {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+/* ─── ECG draw (login) ───────────────────────────────────────────────────── */
+@keyframes ecg-draw {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.ecg-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: ecg-draw 2.5s ease-out forwards;
+}
+
+/* ─── Sidebar active indicator ───────────────────────────────────────────── */
+.sidebar-active-bar {
+  position: absolute;
+  right: 0;
+  top: 15%;
+  width: 3px;
+  height: 70%;
+  background: var(--color-primary);
+  border-radius: 3px 0 0 3px;
+}
+
+/* ─── Table ──────────────────────────────────────────────────────────────── */
+.table-header {
+  background: var(--color-meta-4);
+}

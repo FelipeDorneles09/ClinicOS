@@ -1,0 +1,17 @@
+FROM node:20-alpine
+WORKDIR /app
+
+# Prisma requires OpenSSL 1.1 on Alpine Linux
+RUN apk add --no-cache openssl openssl-dev libc6-compat
+
+# Install dependencies first (layer cache optimization)
+COPY package*.json ./
+RUN npm install
+
+# Copy source (will be overridden by volume in dev, but needed for image)
+COPY . .
+
+# Generate Prisma client
+RUN npx prisma generate
+
+EXPOSE 3001

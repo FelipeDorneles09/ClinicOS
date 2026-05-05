@@ -1,0 +1,23 @@
+# Environment secrets
+.env
+.env.local
+.env.production
+
+# Node
+node_modules/
+
+# Build artifacts
+dist/
+.next/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

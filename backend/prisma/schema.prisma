@@ -1,0 +1,126 @@
+// This is your Prisma schema file
+// https://www.prisma.io/docs/concepts/components/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ─────────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  RECEPCIONISTA
+  MEDICO
+}
+
+enum StatusConsulta {
+  AGENDADA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+// ─── Models ────────────────────────────────────────────────────────────────────
+
+model Usuario {
+  id           String   @id @default(cuid())
+  nome         String
+  email        String   @unique
+  senhaHash    String   @map("senha_hash")
+  role         Role     @default(RECEPCIONISTA)
+  ativo        Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  medico           Medico?
+  consultasCriadas Consulta[] @relation("ConsultaCriadaPor")
+
+  @@map("usuarios")
+}
+
+model Especialidade {
+  id        String   @id @default(cuid())
+  nome      String   @unique
+  descricao String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  medicos MedicoEspecialidade[]
+
+  @@map("especialidades")
+}
+
+model Medico {
+  id        String    @id @default(cuid())
+  crm       String    @unique
+  deletedAt DateTime? @map("deleted_at") // Soft Delete
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  // Foreign keys
+  usuarioId String @unique @map("usuario_id")
+
+  // Relations
+  usuario       Usuario              @relation(fields: [usuarioId], references: [id])
+  especialidades MedicoEspecialidade[]
+  consultas     Consulta[]
+
+  @@map("medicos")
+}
+
+model MedicoEspecialidade {
+  medicoId       String @map("medico_id")
+  especialidadeId String @map("especialidade_id")
+
+  medico       Medico        @relation(fields: [medicoId], references: [id])
+  especialidade Especialidade @relation(fields: [especialidadeId], references: [id])
+
+  @@id([medicoId, especialidadeId])
+  @@map("medico_especialidades")
+}
+
+model Paciente {
+  id           String   @id @default(cuid())
+  nomeCompleto String   @map("nome_completo")
+  cpf          String   @unique
+  dataNasc     DateTime @map("data_nasc")
+  telefone     String?
+  email        String?
+  observacoes  String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  consultas Consulta[]
+
+  @@map("pacientes")
+}
+
+model Consulta {
+  id          String         @id @default(cuid())
+  dataHora    DateTime       @map("data_hora")
+  status      StatusConsulta @default(AGENDADA)
+  observacoes String?
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  // Foreign keys
+  pacienteId String @map("paciente_id")
+  medicoId   String @map("medico_id")
+  criadoPorId String @map("criado_por_id")
+
+  // Relations
+  paciente  Paciente @relation(fields: [pacienteId], references: [id])
+  medico    Medico   @relation(fields: [medicoId], references: [id])
+  criadoPor Usuario  @relation("ConsultaCriadaPor", fields: [criadoPorId], references: [id])
+
+  // ─── Prevenção de conflito via constraint SQL ─────────────────────────────
+  // Impossível agendar 2 consultas para o mesmo médico no mesmo horário
+  @@unique([medicoId, dataHora])
+  @@map("consultas")
+}
