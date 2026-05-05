@@ -29,10 +29,11 @@ export async function login(req: Request, res: Response) {
     return res.status(401).json({ error: "Credenciais inválidas" });
   }
 
+  const secret = process.env.JWT_SECRET || "default_secret";
   const token = jwt.sign(
     { id: usuario.id, nome: usuario.nome, email: usuario.email, role: usuario.role },
-    process.env.JWT_SECRET!,
-    { expiresIn: process.env.JWT_EXPIRES_IN || "8h" }
+    secret,
+    { expiresIn: (process.env.JWT_EXPIRES_IN as any) || "8h" }
   );
 
   return res.json({
